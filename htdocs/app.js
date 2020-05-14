@@ -51,7 +51,7 @@ class Spinner extends React.Component {
                         <div id="inner-wheel" style={{transform: 'rotate(' + this.state.spin + 'deg)' }}>
                             {this.sections.map((section) => <this.RenderWheelSection key={i} value={section} angle={i++ * this.angle.section} length={length} width={width}/>)}
                         </div>
-                        <div id="spin" onClick={(e) => this.SpinWheel(e)}>Spin<br/>&amp;<br/>Multiply</div>
+                        <div id="spin" className="pulse" onClick={(e) => this.SpinWheel(e)}>Spin<br/>&amp;<br/>Multiply</div>
                     </div>
                 </div>
                 <div className="col-lg-6 col-12" id="form-container">
@@ -394,7 +394,7 @@ $(document).ready(function () {
     console.log('%cStop!', 'color:red; font-size:60px; font-weight: bold; -webkit-text-stroke: 1px black;');
     console.log("%cThis is a browser feature intended for developers. If someone told you to copy and paste something here to enable any feature or \"hack\" someone's account, it is a scam and will give them access to your account.", 'font-size: 18px;');
     
-    $.get("/game/test")
+    $.post("/game/test")
     .done(function(data) {
         var result = jQuery.parseJSON(data);
         ReactDOM.render(

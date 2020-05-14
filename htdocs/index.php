@@ -1,4 +1,5 @@
 <?php
+session_start();
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
@@ -7,7 +8,10 @@ header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
 header('Access-Control-Max-Age: 1000');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 
-session_start();
+//if(!isset($_GET["debug"])){
+//	error_reporting(0);
+//}
+
 
 require '../vendor/autoload.php';
 
@@ -20,11 +24,23 @@ $container = $app->getContainer();
 $container['view'] = new \Slim\Views\PhpRenderer('../templates/');
 
 $app->get('/', function (Request $request, Response $response) {
+	if(file_exists('../app/InitDatabase.php')){
+		require_once('../app/InitDatabase.php');
+		rename('../app/InitDatabase.php', '../app/InitDatabase-bck.php');
+	}
     $response = $this->view->render($response, 'home.phtml', ['router' => $this->router]);
     return $response;
 });
 
-$app->get('/game/{name}', function (Request $request, Response $response, array $args) {
+$app->get('/unit/{a}/{b}/{c}', function (Request $request, Response $response, array $args) {
+    require_once '../app/UserRepository.php';
+    $a = $args['a'];
+    $b = $args['b'];
+    $c = $args['c'];
+    return $response;
+});
+
+$app->post('/game/{name}', function (Request $request, Response $response, array $args) {
     require_once '../app/GameRepository.php'; 
     require_once '../app/Encryption.php';
 
@@ -88,7 +104,7 @@ $app->post('/register', function (Request $request, Response $response, array $a
     }else{
         $user["username"] = $_POST["username"];
         $user["email"] = $_POST["email"];
-        $user["balance"] = $_POST["balance"];
+        $user["balance"] = 1000;
         $user["password"] = md5($_POST["password"]);
 
         UserRepository::CreateUser($user["username"], $user["email"], $user["password"], $user["balance"]);
@@ -96,6 +112,8 @@ $app->post('/register', function (Request $request, Response $response, array $a
         $user["auth"] = true;
         $user["token"] = md5(time().$user["password"]);
         $user["data"] = Encryption::Encrypt(json_encode($user), $user["token"]);
+        $_SESSION["data"] = $user["data"];
+        $_SESSION["token"] = $user["token"];
     }
 
     $response->getBody()->write(json_encode($user));
@@ -132,6 +150,9 @@ $app->get('/spin/{name}/{odd}/{stake}', function (Request $request, Response $re
             }
             $_SESSION["data"] = Encryption::Encrypt(json_encode($user), $_SESSION["token"]);
             UserRepository::SetUserBalance($user["username"], $user["balance"]);
+
+            $username = $user["username"];
+            $balance = $user["balance"];
         }
     }
     return json_encode($result);

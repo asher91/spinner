@@ -15,7 +15,7 @@ This application is made up of 3 sections:
     
     c. When the user places a bet, the bet if sent to the backend which generates the outcome randomly and forward the result to the front end, this preventing any risk of the user tampering with the JS to win.
 
-4) Doker: The whole application has been setup to be containerized on Docker, you just have to build the docker image. 
+4) Doker: The whole application has been setup to be containerized on Docker, both the PHP & DB are hosted within the same container, you just have to build the docker image. 
 5) Authentication: Done by comparing the hashed of the provided password to the Hash in the DB (pasword is not stored in clear text), if they both tally a then the users profile is in turn encrypted using a generated token and both are store in session storage.
 6) Computation: The wheel spins for 6seconds though the outcome has already been calculated on the server and neceddary adjustments made with regards to the users' balance, only when the time is up will a message displayed to the user informing him of the outcome. 
 7) Settings: The spinning wheel is filled with valued from the backend which is loaded on page load, this provide scope for future development in the event that we wish to provide the client (service provided) with a dashboard allowing them to create, update or delete wheel games.
